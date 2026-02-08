@@ -1,132 +1,123 @@
-# Tambo Template
 
-This is a starter NextJS app with Tambo hooked up to get your AI app development started quickly.
+# 🧠 DeepResearch AI Agent
 
-## Get Started
+**A powerful, multi-modal research assistant powered by [Tambo AI](https://tambo.co).**
 
-1. Run `npm create-tambo@latest my-tambo-app` for a new project
+The DeepResearch Agent is designed to go beyond simple Q&A. It autonomously orchestrates specialized tools to conduct deep investigations into scientific papers, financial markets, code repositories, and social sentiment, synthesizing the data into comprehensive reports.
 
-2. `npm install`
+---
 
-3. `npx tambo init`
+## 🚀 Key Capabilities
 
-- or rename `example.env.local` to `.env.local` and add your tambo API key you can get for free [here](https://tambo.co/dashboard).
+### 🔬 Scientific Research
+- **Search ArXiv**: Find authentic academic papers and scientific studies.
+- **Read PDFs**: Downloads and reads full paper PDFs to explain complex concepts, methodologies, and results.
 
-4. Run `npm run dev` and go to `localhost:3000` to use the app!
+### 💻 Tech & Code Intelligence
+- **GitHub Analysis**: Analyzes repositories to understand code structure, dependencies, and project health.
+- **Domain Intelligence**: Performs WHOIS and DNS lookups to verify website ownership, expiry, and server infrastructure.
 
-## Customizing
+### 📈 Financial Markets
+- **Crypto Tracking**: Real-time Solana token prices and historical charts (via Jupiter API).
+- **Stock Market**: Historical stock data for US tickers.
+- **Crypto News**: Aggregates latest sentiment and news from CryptoPanic.
 
-### Change what components tambo can control
+### 🌍 Global Knowledge
+- **Web Search**: Google Search integration for real-time information.
+- **Live News**: Fetches breaking news articles on any topic.
+- **YouTube Intelligence**: Extracts and analyzes video transcripts.
+- **Computational Knowledge**: Solves math and physics problems via WolframAlpha.
 
-You can see how components are registered with tambo in `src/lib/tambo.ts`:
+### 🗣️ Social Sentiment
+- **Reddit Reviews**: Scrapes product reviews and discussions to gauge public opinion.
+- **Deep Dive**: Reads full Reddit threads for detailed user feedback.
 
-```tsx
-export const components: TamboComponent[] = [
-  {
-    name: "Graph",
-    description:
-      "A component that renders various types of charts (bar, line, pie) using Recharts. Supports customizable data visualization with labels, datasets, and styling options.",
-    component: Graph,
-    propsSchema: graphSchema,
-  },
-  // Add more components here
-];
+---
+
+## 🛠️ Architecture
+
+The agent uses a **Tool-Use Architecture** orchestrated by Tambo.
+
+```mermaid
+graph TD
+    User[User Request] --> Orchestrator[AI Orchestrator]
+    Orchestrator -->|Needs Code Info| GitHub[GitHub & Domain Tools]
+    Orchestrator -->|Needs Papers| ArXiv[ArXiv Search & Read]
+    Orchestrator -->|Needs Market Data| Finance[Crypto & Stocks]
+    Orchestrator -->|Needs Sentinel| Social[Reddit & News]
+    Orchestrator -->|General Info| Web[Google & YouTube]
+    GitHub --> Synthesis
+    ArXiv --> Synthesis
+    Finance --> Synthesis
+    Social --> Synthesis
+    Web --> Synthesis
+    Synthesis[Synthesized Report] --> Final[Final Answer]
 ```
 
-You can install the graph component into any project with:
+---
 
+## ⚡ Getting Started
+
+### 1. Clone the Repository
 ```bash
-npx tambo add graph
+git clone https://github.com/yourusername/deepresearch-agent.git
+cd deepresearch-agent
 ```
 
-The example Graph component demonstrates several key features:
-
-- Different prop types (strings, arrays, enums, nested objects)
-- Multiple chart types (bar, line, pie)
-- Customizable styling (variants, sizes)
-- Optional configurations (title, legend, colors)
-- Data visualization capabilities
-
-Update the `components` array with any component(s) you want tambo to be able to use in a response!
-
-You can find more information about the options [here](https://docs.tambo.co/concepts/generative-interfaces/generative-components)
-
-### Add tools for tambo to use
-
-Tools are defined with `inputSchema` and `outputSchema`:
-
-```tsx
-export const tools: TamboTool[] = [
-  {
-    name: "globalPopulation",
-    description:
-      "A tool to get global population trends with optional year range filtering",
-    tool: getGlobalPopulationTrend,
-    inputSchema: z.object({
-      startYear: z.number().optional(),
-      endYear: z.number().optional(),
-    }),
-    outputSchema: z.array(
-      z.object({
-        year: z.number(),
-        population: z.number(),
-        growthRate: z.number(),
-      }),
-    ),
-  },
-];
+### 2. Install Dependencies
+```bash
+npm install
 ```
 
-Find more information about tools [here.](https://docs.tambo.co/concepts/tools)
+### 3. Environment Setup
+Create a `.env.local` file in the root directory:
 
-### The Magic of Tambo Requires the TamboProvider
+```env
+# Tambo Configuration
+NEXT_PUBLIC_TAMBO_API_KEY=your_tambo_api_key_here
+NEXT_PUBLIC_TAMBO_URL=https://api.tambo.ai/v1
 
-Make sure in the TamboProvider wrapped around your app:
-
-```tsx
-...
-<TamboProvider
-  apiKey={process.env.NEXT_PUBLIC_TAMBO_API_KEY!}
-  components={components} // Array of components to control
-  tools={tools} // Array of tools it can use
->
-  {children}
-</TamboProvider>
+# Optional: Specific Tool Keys (if extending)
+# OPENAI_API_KEY=...
 ```
 
-In this example we do this in the `Layout.tsx` file, but you can do it anywhere in your app that is a client component.
-
-### Voice input
-
-The template includes a `DictationButton` component using the `useTamboVoice` hook for speech-to-text input.
-
-### MCP (Model Context Protocol)
-
-The template includes MCP support for connecting to external tools and resources. You can use the MCP hooks from `@tambo-ai/react/mcp`:
-
-- `useTamboMcpPromptList` - List available prompts from MCP servers
-- `useTamboMcpPrompt` - Get a specific prompt
-- `useTamboMcpResourceList` - List available resources
-
-See `src/components/tambo/mcp-components.tsx` for example usage.
-
-### Change where component responses are shown
-
-The components used by tambo are shown alongside the message response from tambo within the chat thread, but you can have the result components show wherever you like by accessing the latest thread message's `renderedComponent` field:
-
-```tsx
-const { thread } = useTambo();
-const latestComponent =
-  thread?.messages[thread.messages.length - 1]?.renderedComponent;
-
-return (
-  <div>
-    {latestComponent && (
-      <div className="my-custom-wrapper">{latestComponent}</div>
-    )}
-  </div>
-);
+### 4. Run Development Server
+```bash
+npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000) to start researching!
 
-For more detailed documentation, visit [Tambo's official docs](https://docs.tambo.co).
-# deepreserchAgent
+---
+
+## 🔧 Tools Reference
+
+The agent is equipped with the following specialized tools (defined in `src/lib/tambo.ts`):
+
+| Category | Tool Name | Description |
+|----------|-----------|-------------|
+| **Science** | `searchArxiv` | Search academic papers |
+| **Science** | `readArxivPaper` | Read full PDF content |
+| **Tech** | `analyzeGithubRepo` | Analyze GitHub repo structure & stats |
+| **Tech** | `analyzeDomain` | WHOIS & DNS lookup |
+| **Finance** | `getCryptoPrice` | Real-time token price (Solana) |
+| **Finance** | `getCryptoHistory` | Historical chart data |
+| **Finance** | `getStockHistory` | US Stock market data |
+| **Social** | `searchRedditReviews` | Find Reddit discussions |
+| **Social** | `getRedditThread` | Scrape full thread comments |
+| **Utility** | `generatePdf` | Create downloadable reports |
+| **Utility** | `wolframCalculation` | Math & Physics solver |
+| **Utility** | `getYoutubeTranscript` | Video text extraction |
+
+---
+
+## 🎨 Tech Stack
+
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **AI Framework**: [Tambo AI](https://tambo.co)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: Radix UI, Lucide Icons
+- **Graphs**: Recharts
+
+---
+
+*Built with ❤️ using Tambo AI*
