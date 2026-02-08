@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { spawn } from 'child_process';
 import path from 'path';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const videoId = searchParams.get('videoId');
